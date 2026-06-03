@@ -1,204 +1,300 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>MF NAV Tracker — Live Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d0f14;--bg2:#13161e;--bg3:#1a1e29;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
-  --text:#e8eaf0;--muted:#6b7080;--muted2:#9aa0b0;
-  --accent:#4f8ef7;--accent2:#7eb8ff;
-  --green:#3ecf8e;--green-bg:rgba(62,207,142,0.1);
-  --red:#f76f6f;--red-bg:rgba(247,111,111,0.1);
-  --nippon:#ff8c42;--nippon-bg:rgba(255,140,66,0.1);
-  --hdfc:#4f8ef7;--hdfc-bg:rgba(79,142,247,0.1);
-  --regular:#a78bfa;--regular-bg:rgba(167,139,250,0.1);
-  --direct:#34d399;--direct-bg:rgba(52,211,153,0.1);
-  --radius:10px;--radius-lg:16px;
-  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --bg:#060810;--bg2:#0c0f1a;--bg3:#111520;--bg4:#161b2e;
+  --glass:rgba(255,255,255,0.032);--glass2:rgba(255,255,255,0.055);
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.18);
+  --text:#f0f2f8;--text2:#c8cde0;--muted:#5a617a;--muted2:#8892aa;
+  --accent:#3b82f6;--accent2:#60a5fa;--accent3:#93c5fd;--glow:rgba(59,130,246,0.15);
+  --green:#10b981;--green2:#34d399;--green-bg:rgba(16,185,129,0.08);--green-glow:rgba(16,185,129,0.2);
+  --red:#ef4444;--red2:#f87171;--red-bg:rgba(239,68,68,0.08);
+  --nippon:#f97316;--nippon-bg:rgba(249,115,22,0.08);
+  --hdfc:#3b82f6;--hdfc-bg:rgba(59,130,246,0.08);
+  --regular:#a78bfa;--regular-bg:rgba(167,139,250,0.08);
+  --direct:#10b981;--direct-bg:rgba(16,185,129,0.08);
+  --r:8px;--r2:12px;--r3:16px;
+  --mono:"JetBrains Mono",monospace;--sans:"Space Grotesk",sans-serif;
+  --sidebar:240px;
 }
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
-.shell{display:flex;min-height:100vh}
-.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-.main{flex:1;padding:24px 28px;overflow-x:hidden;min-width:0}
-.logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
-.logo-mark{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
-.logo-title{font-size:15px;font-weight:600;color:var(--text);line-height:1.3}
-.logo-shared{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--green);font-family:var(--mono);margin-top:4px;background:var(--green-bg);padding:2px 7px;border-radius:20px}
-.nav-section{padding:14px 10px 6px}
-.nav-label{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:0 8px;margin-bottom:5px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--radius);cursor:pointer;transition:background .15s;font-size:13px;color:var(--muted2);border:none;background:none;width:100%;text-align:left}
-.nav-item:hover{background:var(--bg3);color:var(--text)}
-.nav-item.active{background:rgba(79,142,247,.12);color:var(--accent2)}
-.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.sidebar-footer{margin-top:auto;padding:14px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.8}
-.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:14px}
-.page-title{font-size:20px;font-weight:600;color:var(--text)}
-.page-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;border:none}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#3a7de8}
-.btn-outline{background:transparent;color:var(--muted2);border:1px solid var(--border2)}
-.btn-outline:hover{background:var(--bg3);color:var(--text)}
-.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(247,111,111,.2)}
-.btn-danger:hover{background:rgba(247,111,111,.2)}
-.btn-sm{padding:3px 9px;font-size:11px}
-.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:22px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px}
-.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
-.stat-value{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--text);line-height:1}
-.stat-value.green{color:var(--green)}.stat-value.red{color:var(--red)}.stat-value.accent{color:var(--accent2)}
-.controls-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.search-wrap{position:relative;flex:1;min-width:180px;max-width:300px}
-.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none}
-.search-input{width:100%;padding:8px 10px 8px 32px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--sans);font-size:12px;transition:border-color .15s;outline:none}
-.search-input:focus{border-color:var(--accent)}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);background-size:44px 44px}
+body::after{content:"";position:fixed;top:-200px;right:-200px;width:600px;height:600px;z-index:0;pointer-events:none;background:radial-gradient(circle,rgba(59,130,246,0.055) 0%,transparent 70%)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-inner{display:flex;flex-direction:column;height:100%;padding:0 10px}
+.logo-area{padding:22px 8px 20px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.logo-eyebrow{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px}
+.logo-name{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.2}
+.logo-name span{color:var(--accent2)}
+.live-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--green2);letter-spacing:.08em;background:var(--green-bg);border:1px solid rgba(52,211,153,0.2);padding:3px 9px;border-radius:20px;margin-top:8px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green2);animation:livepulse 1.8s ease-in-out infinite;flex-shrink:0}
+@keyframes livepulse{0%,100%{opacity:1;box-shadow:0 0 0 0 var(--green-glow)}50%{opacity:.5;box-shadow:0 0 0 4px transparent}}
+.nav-group{margin-bottom:4px}
+.nav-group-label{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;padding:12px 10px 6px}
+.nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:var(--r);border:1px solid transparent;background:none;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--muted2);transition:all .18s ease;text-align:left}
+.nav-btn:hover{background:var(--glass2);color:var(--text2)}
+.nav-btn.active{background:var(--glow);color:var(--accent3);border-color:rgba(59,130,246,0.15)}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.6}
+.nav-btn.active .nav-icon{opacity:1}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:16px 10px 18px;border-top:1px solid var(--border);font-size:10px;color:var(--muted);font-family:var(--mono);line-height:2}
+.sidebar-footer .time{font-size:11px;color:var(--muted2);font-weight:500}
+
+/* MAIN */
+.main{flex:1;padding:28px 32px;min-width:0;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap}
+.page-eyebrow{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.page-title{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1}
+.page-date{font-size:12px;color:var(--muted2);margin-top:4px;font-family:var(--mono)}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s ease;border:none;letter-spacing:.01em}
+.btn-primary{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,0.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#60a5fa,#3b82f6);box-shadow:0 4px 20px rgba(59,130,246,0.4);transform:translateY(-1px)}
+.btn-outline{background:var(--glass);color:var(--muted2);border:1px solid var(--border2)}
+.btn-outline:hover{background:var(--glass2);color:var(--text);border-color:var(--border3)}
+.btn-danger{background:var(--red-bg);color:var(--red2);border:1px solid rgba(239,68,68,0.18)}
+.btn-danger:hover{background:rgba(239,68,68,0.14)}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
+
+/* PLAN TOGGLE */
+.plan-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:3px;gap:2px}
+.plan-btn{padding:5px 14px;border-radius:6px;border:none;background:transparent;font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;color:var(--muted);letter-spacing:.02em}
+.plan-btn.active-regular{background:var(--regular-bg);color:var(--regular);box-shadow:inset 0 0 0 1px rgba(167,139,250,.2)}
+.plan-btn.active-direct{background:var(--direct-bg);color:var(--direct);box-shadow:inset 0 0 0 1px rgba(16,185,129,.2)}
+.plan-btn.active-both{background:var(--glass2);color:var(--text);box-shadow:inset 0 0 0 1px var(--border2)}
+
+/* STATUS */
+.status-bar{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2);font-family:var(--mono)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green2);animation:livepulse 1.8s ease-in-out infinite}
+
+/* SYNC BANNER */
+.sync-banner{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,rgba(16,185,129,0.05),rgba(16,185,129,0.02));border:1px solid rgba(16,185,129,0.15);border-radius:var(--r2);padding:10px 16px;font-size:11px;color:var(--green2);margin-bottom:20px;font-family:var(--mono);letter-spacing:.02em}
+
+/* STAT CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .2s}
+.stat-card:hover::before{opacity:1}
+.stat-card.green-card::before{background:linear-gradient(90deg,transparent,var(--green2),transparent)}
+.stat-card.red-card::before{background:linear-gradient(90deg,transparent,var(--red2),transparent)}
+.stat-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.stat-value{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--text);line-height:1}
+.stat-value.green{color:var(--green2)}.stat-value.red{color:var(--red2)}.stat-value.accent{color:var(--accent2)}
+.stat-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:5px}
+
+/* CONTROLS */
+.controls-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px;max-width:320px}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search-input{width:100%;padding:9px 12px 9px 36px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--sans);font-size:13px;transition:border-color .18s,box-shadow .18s;outline:none}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
 .search-input::placeholder{color:var(--muted)}
-.plan-toggle{display:flex;background:var(--bg3);border-radius:var(--radius);padding:3px;gap:2px}
-.plan-btn{padding:4px 12px;border-radius:7px;border:none;background:transparent;font-family:var(--sans);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--muted2)}
-.plan-btn.active-regular{background:var(--regular-bg);color:var(--regular)}
-.plan-btn.active-direct{background:var(--direct-bg);color:var(--direct)}
-.plan-btn.active-both{background:rgba(255,255,255,.06);color:var(--text)}
-.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow-x:auto;margin-bottom:16px}
-.section-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px}
-.section-head-left{display:flex;align-items:center;gap:8px}
-.amc-badge{font-size:10px;font-weight:500;padding:2px 9px;border-radius:20px;font-family:var(--mono);letter-spacing:.04em}
-.badge-nippon{background:var(--nippon-bg);color:var(--nippon);border:1px solid rgba(255,140,66,.2)}
-.badge-hdfc{background:var(--hdfc-bg);color:var(--hdfc);border:1px solid rgba(79,142,247,.2)}
-.badge-custom{background:rgba(126,184,255,.08);color:var(--accent2);border:1px solid rgba(79,142,247,.15)}
-.plan-tag{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;font-family:var(--mono)}
-.tag-regular{background:var(--regular-bg);color:var(--regular);border:1px solid rgba(167,139,250,.25)}
-.tag-direct{background:var(--direct-bg);color:var(--direct);border:1px solid rgba(52,211,153,.25)}
-.section-name{font-size:13px;font-weight:500}
-.fund-count{font-size:11px;color:var(--muted);font-family:var(--mono)}
-table{width:100%;border-collapse:collapse}
-thead tr{border-bottom:1px solid var(--border)}
-th{padding:8px 12px;text-align:left;font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap}
+
+/* SECTION CARD */
+.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);overflow:hidden;margin-bottom:16px;transition:border-color .2s}
+.section-card:hover{border-color:var(--border2)}
+.section-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(90deg,var(--bg3),var(--bg2));border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.section-head-left{display:flex;align-items:center;gap:10px}
+.amc-badge{font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.badge-nippon{background:var(--nippon-bg);color:var(--nippon);border:1px solid rgba(249,115,22,.2)}
+.badge-hdfc{background:var(--hdfc-bg);color:var(--hdfc);border:1px solid rgba(59,130,246,.2)}
+.badge-custom{background:var(--glass);color:var(--accent2);border:1px solid var(--border2)}
+.section-name{font-size:14px;font-weight:600;color:var(--text2);letter-spacing:-.01em}
+.fund-count{font-size:10px;color:var(--muted);font-family:var(--mono);background:var(--bg4);padding:2px 8px;border-radius:20px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:600px}
+thead tr{background:var(--bg3)}
+th{padding:9px 14px;text-align:left;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap}
 th.right{text-align:right}th.center{text-align:center}
-td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.015)}
-.fund-name{font-size:12px;font-weight:500;color:var(--text)}
-.fund-meta{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.nav-val{font-family:var(--mono);font-size:13px;font-weight:500}
-.nav-date{font-size:10px;color:var(--muted);margin-top:1px;font-family:var(--mono)}
-.change-pct{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:500}
-.pct-up{background:var(--green-bg);color:var(--green)}
-.pct-down{background:var(--red-bg);color:var(--red)}
-.pct-flat{background:rgba(255,255,255,.05);color:var(--muted2)}
-.change-inr{font-family:var(--mono);font-size:11px}
-.change-inr.up{color:var(--green)}.change-inr.down{color:var(--red)}
-.amfi-link{font-size:10px;color:var(--accent2);text-decoration:none;opacity:.7}
+tr{transition:background .12s}
+tr:hover td{background:rgba(255,255,255,.018)}
+.fund-name{font-size:12px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.fund-meta{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.nav-val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text)}
+.nav-prev{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--muted2)}
+.nav-date{font-size:9px;color:var(--muted);font-family:var(--mono)}
+.change-pct{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:700}
+.pct-up{background:var(--green-bg);color:var(--green2);box-shadow:inset 0 0 0 1px rgba(16,185,129,.15)}
+.pct-down{background:var(--red-bg);color:var(--red2);box-shadow:inset 0 0 0 1px rgba(239,68,68,.15)}
+.pct-flat{background:var(--glass);color:var(--muted2)}
+.change-inr{font-family:var(--mono);font-size:11px;font-weight:600}
+.change-inr.up{color:var(--green2)}.change-inr.down{color:var(--red2)}.change-inr.flat{color:var(--muted2)}
+.plan-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.tag-regular{background:var(--regular-bg);color:var(--regular);border:1px solid rgba(167,139,250,.2)}
+.tag-direct{background:var(--direct-bg);color:var(--direct);border:1px solid rgba(16,185,129,.2)}
+.col-sep{border-left:1px solid var(--border2)!important}
+.amfi-link{font-size:10px;color:var(--accent2);text-decoration:none;font-family:var(--mono);opacity:.6;transition:opacity .15s}
 .amfi-link:hover{opacity:1}
-.col-sep{border-left:2px solid rgba(255,255,255,.07)!important}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
 .modal-overlay.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;width:480px;max-width:95vw;animation:slideUp .2s ease;max-height:90vh;overflow-y:auto}
-@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.modal-title{font-size:16px;font-weight:600;margin-bottom:5px}
-.modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
-.form-group{margin-bottom:14px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form-label{font-size:12px;color:var(--muted2);margin-bottom:5px;display:block}
-.form-input,.form-select{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--sans);font-size:12px;outline:none;transition:border-color .15s}
-.form-input:focus,.form-select:focus{border-color:var(--accent)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:28px;width:500px;max-width:95vw;animation:modalIn .22s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.modal-sub{font-size:12px;color:var(--muted2);margin-top:3px}
+.modal-close{background:var(--glass);border:1px solid var(--border);border-radius:8px;color:var(--muted2);cursor:pointer;padding:6px;transition:all .15s;line-height:0}
+.modal-close:hover{background:var(--glass2);color:var(--text)}
+.form-group{margin-bottom:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-label{font-size:11px;font-weight:600;color:var(--muted2);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.06em}
+.form-input,.form-select{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .18s,box-shadow .18s}
+.form-input:focus,.form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
 .form-input::placeholder{color:var(--muted)}
 .form-select option{background:var(--bg3)}
-.form-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
-.plan-notice{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-radius:var(--radius);padding:9px 12px;font-size:11px;color:var(--muted2);margin-bottom:14px;line-height:1.6}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 16px;font-size:12px;color:var(--text);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;z-index:200}
+.form-hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.plan-notice{background:linear-gradient(135deg,rgba(167,139,250,0.06),rgba(16,185,129,0.04));border:1px solid rgba(167,139,250,.18);border-radius:var(--r2);padding:12px 14px;font-size:11px;color:var(--muted2);margin-bottom:18px;line-height:1.7}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:12px 18px;font-size:12px;font-weight:500;color:var(--text);opacity:0;transform:translateY(8px) scale(.97);transition:all .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .toast.show{opacity:1;transform:none}
-.status-bar{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-family:var(--mono)}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.loading-cell{padding:18px 14px;color:var(--muted);font-size:12px}
-.empty-state{padding:36px 20px;text-align:center;color:var(--muted)}
-.sync-banner{display:flex;align-items:center;gap:8px;background:rgba(62,207,142,.06);border:1px solid rgba(62,207,142,.18);border-radius:var(--radius);padding:8px 14px;font-size:11px;color:var(--green);margin-bottom:16px;font-family:var(--mono)}
-@media(max-width:768px){.sidebar{display:none}.main{padding:16px 14px}th,td{padding:8px 7px}.form-row{grid-template-columns:1fr}}
+
+/* LOADING / EMPTY */
+.loading-cell{padding:32px 20px;color:var(--muted);font-size:12px;font-family:var(--mono);text-align:center;letter-spacing:.04em}
+.loading-cell::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:10px;animation:livepulse 1.2s ease-in-out infinite}
+.empty-state{padding:48px 20px;text-align:center;color:var(--muted);font-size:13px}
+
+/* MOBILE NAV */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(12,15,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border2);z-index:50;padding:8px 0 max(env(safe-area-inset-bottom),8px)}
+.mobile-nav-inner{display:flex;justify-content:space-around}
+.mob-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 14px;background:none;border:none;color:var(--muted);font-family:var(--sans);font-size:10px;font-weight:600;cursor:pointer;border-radius:var(--r);transition:all .15s;letter-spacing:.02em}
+.mob-btn.active{color:var(--accent2)}
+.mob-add-btn{color:white!important;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:var(--r2);padding:6px 16px;box-shadow:0 4px 16px rgba(59,130,246,0.3)}
+
+/* DRAWER */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;backdrop-filter:blur(4px)}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;left:0;top:0;bottom:0;width:280px;background:var(--bg2);border-right:1px solid var(--border2);z-index:70;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer-close{position:absolute;top:16px;right:16px;background:var(--glass);border:1px solid var(--border);color:var(--muted2);cursor:pointer;padding:6px;border-radius:var(--r);line-height:0}
+
+/* RESPONSIVE */
+@media(max-width:1024px){:root{--sidebar:200px}.main{padding:22px 20px}.summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .sidebar{display:none}.mobile-nav{display:block}
+  .main{padding:16px 14px;padding-bottom:90px}
+  .topbar{margin-bottom:18px}.page-title{font-size:20px}
+  .topbar-right{width:100%;justify-content:space-between}
+  .summary-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+  .stat-card{padding:14px 16px}.stat-value{font-size:22px}
+  .search-wrap{max-width:100%;flex:1}
+  .section-head{padding:12px 14px}
+  th,td{padding:9px 10px;font-size:11px}
+  .fund-name{font-size:11px}.nav-val{font-size:12px}
+  .form-row{grid-template-columns:1fr}.modal{padding:20px 18px;border-radius:16px}
+  .plan-toggle{gap:1px}.plan-btn{padding:5px 10px;font-size:10px}
+}
+@media(max-width:480px){
+  .main{padding:12px 12px;padding-bottom:88px}
+  .summary-grid{gap:8px}.stat-value{font-size:20px}.page-title{font-size:18px}
+  th,td{padding:8px 8px;font-size:10px}
+  .nav-val,.nav-prev{font-size:11px}.change-pct{padding:2px 6px;font-size:10px}
+  .topbar-right .status-bar{display:none}
+}
 </style>
 </head>
 <body>
 <div class="shell">
   <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-mark">Distributor</div>
-      <div class="logo-title">MF NAV Tracker</div>
-      <div class="logo-shared">⬤ shared live</div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">AMC Filter</div>
-      <button class="nav-item active" onclick="setFilter('all',this)"><span class="nav-dot" style="background:var(--muted)"></span>All Funds</button>
-      <button class="nav-item" onclick="setFilter('nippon',this)"><span class="nav-dot" style="background:var(--nippon)"></span>Nippon India</button>
-      <button class="nav-item" onclick="setFilter('hdfc',this)"><span class="nav-dot" style="background:var(--hdfc)"></span>HDFC</button>
-      <button class="nav-item" id="customNavBtn" style="display:none" onclick="setFilter('custom',this)"><span class="nav-dot" style="background:var(--accent2)"></span><span id="customNavLabel">Other</span></button>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Plan Filter</div>
-      <button class="nav-item" id="planAll" onclick="setPlanFilter('both')"><span class="nav-dot" style="background:var(--muted)"></span>Both plans</button>
-      <button class="nav-item" id="planReg" onclick="setPlanFilter('regular')"><span class="nav-dot" style="background:var(--regular)"></span>Regular only</button>
-      <button class="nav-item" id="planDir" onclick="setPlanFilter('direct')"><span class="nav-dot" style="background:var(--direct)"></span>Direct only</button>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Actions</div>
-      <button class="nav-item" onclick="openAddModal()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add fund
-      </button>
-      <button class="nav-item" onclick="refreshAll()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>Refresh NAV
-      </button>
-    </div>
-    <div class="sidebar-footer">
-      Source: AMFI via mfapi.in<br>
-      NAV updates after 6 PM IST<br>
-      <span style="color:var(--regular)">■</span> Regular &nbsp;<span style="color:var(--direct)">■</span> Direct<br>
-      <span id="sidebarTime" style="color:var(--muted2)"></span>
+    <div class="sidebar-inner">
+      <div class="logo-area">
+        <div class="logo-eyebrow">Distributor Portal</div>
+        <div class="logo-name">MF NAV <span>Tracker</span></div>
+        <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">AMC Filter</div>
+        <button class="nav-btn active" onclick="setFilter('all',this)">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>All Funds
+        </button>
+        <button class="nav-btn" onclick="setFilter('nippon',this)"><span class="nav-dot" style="background:var(--nippon)"></span>Nippon India</button>
+        <button class="nav-btn" onclick="setFilter('hdfc',this)"><span class="nav-dot" style="background:var(--hdfc)"></span>HDFC Mutual</button>
+        <button class="nav-btn" id="customNavBtn" style="display:none" onclick="setFilter('custom',this)"><span class="nav-dot" style="background:var(--accent2)"></span><span id="customNavLabel">Other</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Plan Type</div>
+        <button class="nav-btn" id="planAll" onclick="setPlanFilter('both')"><span class="nav-dot" style="background:var(--muted)"></span>Both Plans</button>
+        <button class="nav-btn" id="planReg" onclick="setPlanFilter('regular')"><span class="nav-dot" style="background:var(--regular)"></span>Regular Only</button>
+        <button class="nav-btn" id="planDir" onclick="setPlanFilter('direct')"><span class="nav-dot" style="background:var(--direct)"></span>Direct Only</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Actions</div>
+        <button class="nav-btn" onclick="openAddModal()">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Fund
+        </button>
+        <button class="nav-btn" onclick="refreshAll()">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>Refresh NAV
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        <div>Source: AMFI via mfapi.in</div>
+        <div>NAV updates after 6 PM IST</div>
+        <div><span style="color:var(--regular)">&#9679;</span> Regular &nbsp;<span style="color:var(--direct)">&#9679;</span> Direct</div>
+        <div class="time" id="sidebarTime"></div>
+      </div>
     </div>
   </aside>
 
   <main class="main">
-    <div class="page-header">
+    <div class="topbar">
       <div>
-        <div class="page-title">Daily NAV Dashboard</div>
-        <div class="page-sub" id="todayDate">—</div>
+        <div class="page-eyebrow">Live Dashboard</div>
+        <div class="page-title">Daily NAV Overview</div>
+        <div class="page-date" id="todayDate">&#8212;</div>
       </div>
-      <div class="header-actions">
+      <div class="topbar-right">
         <div class="plan-toggle">
           <button class="plan-btn active-both" id="ptBoth" onclick="setPlanFilter('both')">Both</button>
           <button class="plan-btn" id="ptReg" onclick="setPlanFilter('regular')">Regular</button>
           <button class="plan-btn" id="ptDir" onclick="setPlanFilter('direct')">Direct</button>
         </div>
-        <div class="status-bar"><span class="status-dot"></span><span id="statusText">Loading…</span></div>
+        <div class="status-bar"><span class="status-dot"></span><span id="statusText">Loading&#8230;</span></div>
         <button class="btn btn-outline" onclick="refreshAll()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>Refresh
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>Refresh
         </button>
         <button class="btn btn-primary" onclick="openAddModal()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add fund
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Fund
         </button>
       </div>
     </div>
 
     <div id="syncBanner" class="sync-banner" style="display:none">
-      ⬤ &nbsp;Shared dashboard — fund list is synced for everyone viewing this link
+      <span class="live-dot"></span>Shared dashboard &#8212; fund list is synced for everyone viewing this link
     </div>
 
     <div class="summary-grid">
-      <div class="stat-card"><div class="stat-label">Total funds</div><div class="stat-value accent" id="s-total">—</div></div>
-      <div class="stat-card"><div class="stat-label">Gainers today</div><div class="stat-value green" id="s-gain">—</div></div>
-      <div class="stat-card"><div class="stat-label">Losers today</div><div class="stat-value red" id="s-loss">—</div></div>
-      <div class="stat-card"><div class="stat-label">Avg change</div><div class="stat-value" id="s-avg">—</div></div>
+      <div class="stat-card"><div class="stat-label">Total Funds</div><div class="stat-value accent" id="s-total">&#8212;</div><div class="stat-sub">tracked schemes</div></div>
+      <div class="stat-card green-card"><div class="stat-label">Gainers Today</div><div class="stat-value green" id="s-gain">&#8212;</div><div class="stat-sub">NAV increased</div></div>
+      <div class="stat-card red-card"><div class="stat-label">Losers Today</div><div class="stat-value red" id="s-loss">&#8212;</div><div class="stat-sub">NAV decreased</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Change</div><div class="stat-value" id="s-avg">&#8212;</div><div class="stat-sub">across all funds</div></div>
     </div>
 
     <div class="controls-row">
       <div class="search-wrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="search-input" type="text" placeholder="Search fund name…" id="searchInput" oninput="renderAll()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" placeholder="Search fund name&#8230;" id="searchInput" oninput="renderAll()">
       </div>
     </div>
 
@@ -206,17 +302,20 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </main>
 </div>
 
+<!-- MODAL -->
 <div class="modal-overlay" id="addModal" onclick="closeModalOutside(event)">
   <div class="modal">
-    <div class="modal-title">Add new fund</div>
-    <div class="modal-sub">Enter Regular and/or Direct scheme code. At least one is required.</div>
+    <div class="modal-header">
+      <div><div class="modal-title">Add New Fund</div><div class="modal-sub">Enter Regular and/or Direct scheme code. At least one required.</div></div>
+      <button class="modal-close" onclick="closeModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
     <div class="plan-notice">
-      <strong style="color:var(--regular)">Regular plan</strong> — through distributor (you earn commission)<br>
-      <span style="color:var(--direct)">Direct plan</span> — investor buys directly from AMC (no commission)<br>
-      Direct NAV is always higher than Regular.
+      <strong style="color:var(--regular)">Regular plan</strong> &#8212; sold through distributor (you earn commission)<br>
+      <span style="color:var(--direct)">Direct plan</span> &#8212; investor buys directly from AMC (no commission)<br>
+      Direct NAV is always slightly higher than Regular.
     </div>
     <div class="form-group">
-      <label class="form-label">AMC / Fund house</label>
+      <label class="form-label">AMC / Fund House</label>
       <select class="form-select" id="f-amc">
         <option value="nippon">Nippon India Mutual Fund</option>
         <option value="hdfc">HDFC Mutual Fund</option>
@@ -224,370 +323,105 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </select>
     </div>
     <div class="form-group" id="customAmcGroup" style="display:none">
-      <label class="form-label">AMC name</label>
+      <label class="form-label">AMC Name</label>
       <input class="form-input" type="text" id="f-customAmc" placeholder="e.g. SBI Mutual Fund">
     </div>
     <div class="form-group">
-      <label class="form-label">Fund name</label>
+      <label class="form-label">Fund Name</label>
       <input class="form-input" type="text" id="f-name" placeholder="e.g. HDFC Mid-Cap Opportunities Fund">
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label" style="color:var(--regular)">Regular — scheme code</label>
+        <label class="form-label" style="color:var(--regular)">Regular &#8212; Scheme Code</label>
         <input class="form-input" type="text" id="f-regcode" placeholder="e.g. 119292">
         <div class="form-hint">Leave blank if not tracking</div>
       </div>
       <div class="form-group">
-        <label class="form-label" style="color:var(--direct)">Direct — scheme code</label>
+        <label class="form-label" style="color:var(--direct)">Direct &#8212; Scheme Code</label>
         <input class="form-input" type="text" id="f-dircode" placeholder="e.g. 119551">
         <div class="form-hint">Leave blank if not tracking</div>
       </div>
     </div>
-    <div class="form-hint" style="margin-top:-6px;margin-bottom:14px">
-      Find codes at <a href="https://mfapi.in" target="_blank" style="color:var(--accent2)">mfapi.in</a> or <a href="https://www.amfiindia.com/net-asset-value" target="_blank" style="color:var(--accent2)">amfiindia.com</a>
-    </div>
+    <div class="form-hint" style="margin-top:-8px;margin-bottom:2px">Find codes at <a href="https://mfapi.in" target="_blank" style="color:var(--accent2)">mfapi.in</a> or <a href="https://www.amfiindia.com/net-asset-value" target="_blank" style="color:var(--accent2)">amfiindia.com</a></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="addFund()">Add fund</button>
+      <button class="btn btn-primary" onclick="addFund()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Fund</button>
     </div>
   </div>
 </div>
 
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" onclick="closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="sidebar-inner" style="padding-top:20px">
+    <div class="logo-area">
+      <div class="logo-eyebrow">Distributor Portal</div>
+      <div class="logo-name">MF NAV <span>Tracker</span></div>
+      <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">AMC Filter</div>
+      <button class="nav-btn" onclick="setFilter('all',this);closeDrawer()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>All Funds</button>
+      <button class="nav-btn" onclick="setFilter('nippon',this);closeDrawer()"><span class="nav-dot" style="background:var(--nippon)"></span>Nippon India</button>
+      <button class="nav-btn" onclick="setFilter('hdfc',this);closeDrawer()"><span class="nav-dot" style="background:var(--hdfc)"></span>HDFC Mutual</button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Plan Type</div>
+      <button class="nav-btn" onclick="setPlanFilter('both');closeDrawer()"><span class="nav-dot" style="background:var(--muted)"></span>Both Plans</button>
+      <button class="nav-btn" onclick="setPlanFilter('regular');closeDrawer()"><span class="nav-dot" style="background:var(--regular)"></span>Regular Only</button>
+      <button class="nav-btn" onclick="setPlanFilter('direct');closeDrawer()"><span class="nav-dot" style="background:var(--direct)"></span>Direct Only</button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Actions</div>
+      <button class="nav-btn" onclick="refreshAll();closeDrawer()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>Refresh NAV</button>
+    </div>
+    <div class="sidebar-footer">
+      <div>Source: AMFI via mfapi.in</div><div>NAV updates after 6 PM IST</div>
+      <div><span style="color:var(--regular)">&#9679;</span> Regular &nbsp;<span style="color:var(--direct)">&#9679;</span> Direct</div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="mob-btn active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+    <button class="mob-btn" onclick="refreshAll()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>Refresh</button>
+    <button class="mob-btn mob-add-btn" onclick="openAddModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add</button>
+    <button class="mob-btn" onclick="openDrawer()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>Filter</button>
+  </div>
+</nav>
 <div class="toast" id="toast"></div>
 
 <script>
-const DEFAULT_FUNDS = [
-  {name:"Nippon India Large Cap Fund",amc:"nippon",regularCode:"118989",directCode:"118701"},
-  {name:"Nippon India Small Cap Fund",amc:"nippon",regularCode:"118778",directCode:"118777"},
-  {name:"Nippon India Multi Cap Fund",amc:"nippon",regularCode:"118825",directCode:"118824"},
-  {name:"Nippon India Growth Fund",amc:"nippon",regularCode:"118560",directCode:"118559"},
-  {name:"Nippon India Flexi Cap Fund",amc:"nippon",regularCode:"120465",directCode:"120466"},
-  {name:"Nippon India Liquid Fund",amc:"nippon",regularCode:"118272",directCode:"118271"},
-  {name:"Nippon India Short Term Fund",amc:"nippon",regularCode:"118305",directCode:"118304"},
-  {name:"Nippon India Gilt Securities Fund",amc:"nippon",regularCode:"118354",directCode:"118353"},
-  {name:"Nippon India Balanced Advantage Fund",amc:"nippon",regularCode:"118551",directCode:"118550"},
-  {name:"Nippon India Power & Infra Fund",amc:"nippon",regularCode:"118804",directCode:"118803"},
-  {name:"Nippon India Pharma Fund",amc:"nippon",regularCode:"118806",directCode:"118807"},
-  {name:"Nippon India Banking & Fin Services Fund",amc:"nippon",regularCode:"118801",directCode:"118800"},
-  {name:"Nippon India Focused Equity Fund",amc:"nippon",regularCode:"118548",directCode:"118547"},
-  {name:"Nippon India Value Fund",amc:"nippon",regularCode:"118844",directCode:"118843"},
-  {name:"Nippon India Consumption Fund",amc:"nippon",regularCode:"118808",directCode:"118809"},
-  {name:"Nippon India Tax Saver (ELSS) Fund",amc:"nippon",regularCode:"118839",directCode:"118838"},
-  {name:"Nippon India Multi Asset Allocation Fund",amc:"nippon",regularCode:"147946",directCode:"147947"},
-  {name:"Nippon India Arbitrage Fund",amc:"nippon",regularCode:"118995",directCode:"118994"},
-  {name:"Nippon India US Equity Opp Fund",amc:"nippon",regularCode:"119643",directCode:"119644"},
-  {name:"HDFC Top 100 Fund",amc:"hdfc",regularCode:"119533",directCode:"119552"},
-  {name:"HDFC Mid-Cap Opportunities Fund",amc:"hdfc",regularCode:"119292",directCode:"119551"},
-  {name:"HDFC Small Cap Fund",amc:"hdfc",regularCode:"119598",directCode:"119599"},
-  {name:"HDFC Flexi Cap Fund",amc:"hdfc",regularCode:"119597",directCode:"119596"},
-  {name:"HDFC Balanced Advantage Fund",amc:"hdfc",regularCode:"119189",directCode:"119188"},
-  {name:"HDFC Liquid Fund",amc:"hdfc",regularCode:"119062",directCode:"119061"},
-  {name:"HDFC Short Term Debt Fund",amc:"hdfc",regularCode:"119105",directCode:"119104"},
-  {name:"HDFC Corporate Bond Fund",amc:"hdfc",regularCode:"119816",directCode:"119815"},
-  {name:"HDFC Gilt Fund",amc:"hdfc",regularCode:"119094",directCode:"119093"},
-  {name:"HDFC Equity Savings Fund",amc:"hdfc",regularCode:"119817",directCode:"119818"},
-  {name:"HDFC Infrastructure Fund",amc:"hdfc",regularCode:"104686",directCode:"119020"},
-  {name:"HDFC Large and Mid Cap Fund",amc:"hdfc",regularCode:"100233",directCode:"119021"},
-  {name:"HDFC Multi Cap Fund",amc:"hdfc",regularCode:"149243",directCode:"149244"},
-  {name:"HDFC Focused 30 Fund",amc:"hdfc",regularCode:"100235",directCode:"119017"},
-  {name:"HDFC Index Fund Nifty 50 Plan",amc:"hdfc",regularCode:"120716",directCode:"120765"},
-  {name:"HDFC Nifty Next 50 Index Fund",amc:"hdfc",regularCode:"140178",directCode:"140179"},
-  {name:"HDFC Arbitrage Fund",amc:"hdfc",regularCode:"119270",directCode:"119269"},
-  {name:"HDFC Overnight Fund",amc:"hdfc",regularCode:"145707",directCode:"145708"},
-  {name:"HDFC Money Market Fund",amc:"hdfc",regularCode:"100490",directCode:"119082"},
-  {name:"HDFC Tax Saver (ELSS) Fund",amc:"hdfc",regularCode:"100032",directCode:"119030"},
-  {name:"HDFC Defence Fund",amc:"hdfc",regularCode:"151751",directCode:"151750"},
-  {name:"HDFC Innovation Fund",amc:"hdfc",regularCode:"153621",directCode:"153620"},
-];
-
-const STORAGE_KEY = 'mf_tracker_shared_v1';
-let funds = [];
-let navData = {};
-let currentFilter = 'all';
-let planFilter = 'both';
-let storageReady = false;
-
-async function loadFunds() {
-  try {
-    const result = await window.storage.get(STORAGE_KEY, true);
-    if (result && result.value) {
-      funds = JSON.parse(result.value);
-      storageReady = true;
-      document.getElementById('syncBanner').style.display = 'flex';
-    } else {
-      funds = JSON.parse(JSON.stringify(DEFAULT_FUNDS));
-      await window.storage.set(STORAGE_KEY, JSON.stringify(funds), true);
-      storageReady = true;
-      document.getElementById('syncBanner').style.display = 'flex';
-    }
-  } catch(e) {
-    funds = JSON.parse(JSON.stringify(DEFAULT_FUNDS));
-  }
-}
-
-async function saveFunds() {
-  try {
-    if (storageReady) {
-      await window.storage.set(STORAGE_KEY, JSON.stringify(funds), true);
-    }
-  } catch(e) {}
-}
-
-async function fetchNAV(code) {
-  if (!code) return null;
-  try {
-    const r = await fetch(`https://api.mfapi.in/mf/${code}`);
-    if (!r.ok) return null;
-    const d = await r.json();
-    const navs = d.data;
-    if (!navs || navs.length < 2) return null;
-    const today = parseFloat(navs[0].nav);
-    const yesterday = parseFloat(navs[1].nav);
-    const change = today - yesterday;
-    const pct = (change / yesterday) * 100;
-    return {today, yesterday, change, pct, date: navs[0].date, prevDate: navs[1].date};
-  } catch(e) { return null; }
-}
-
-async function refreshAll() {
-  document.getElementById('statusText').textContent = 'Fetching NAV…';
-  navData = {};
-  document.getElementById('fundContainer').innerHTML =
-    `<div class="section-card"><div class="loading-cell">⟳  Fetching NAV from AMFI via mfapi.in…</div></div>`;
-  await Promise.all(funds.map(async f => {
-    const [reg, dir] = await Promise.all([fetchNAV(f.regularCode), fetchNAV(f.directCode)]);
-    navData[f.regularCode] = reg;
-    navData[f.directCode] = dir;
-  }));
-  updateSummary(); renderAll();
-  const now = new Date();
-  document.getElementById('statusText').textContent = 'Updated ' + now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-}
-
-function updateSummary() {
-  const allNavs = funds.flatMap(f => [navData[f.regularCode], navData[f.directCode]].filter(Boolean));
-  const gainers = allNavs.filter(n => n.pct > 0).length;
-  const losers  = allNavs.filter(n => n.pct < 0).length;
-  const avg = allNavs.length ? allNavs.reduce((a,n) => a + n.pct, 0) / allNavs.length : 0;
-  document.getElementById('s-total').textContent = funds.length;
-  document.getElementById('s-gain').textContent = gainers;
-  document.getElementById('s-loss').textContent = losers;
-  const avgEl = document.getElementById('s-avg');
-  avgEl.textContent = (avg >= 0 ? '+' : '') + avg.toFixed(2) + '%';
-  avgEl.className = 'stat-value ' + (avg > 0 ? 'green' : avg < 0 ? 'red' : '');
-}
-
-function setFilter(f, el) {
-  currentFilter = f;
-  document.querySelectorAll('.nav-section .nav-item').forEach(n => n.classList.remove('active'));
-  el.classList.add('active');
-  renderAll();
-}
-
-function setPlanFilter(p) {
-  planFilter = p;
-  ['ptBoth','ptReg','ptDir'].forEach(id => document.getElementById(id).className = 'plan-btn');
-  if (p === 'both') document.getElementById('ptBoth').className = 'plan-btn active-both';
-  if (p === 'regular') document.getElementById('ptReg').className = 'plan-btn active-regular';
-  if (p === 'direct') document.getElementById('ptDir').className = 'plan-btn active-direct';
-  renderAll();
-}
-
-function renderAll() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  let filtered = funds.filter(f => {
-    if (currentFilter !== 'all' && f.amc !== currentFilter) return false;
-    if (q && !f.name.toLowerCase().includes(q)) return false;
-    return true;
-  });
-  const groups = {};
-  filtered.forEach(f => { if (!groups[f.amc]) groups[f.amc] = []; groups[f.amc].push(f); });
-  const order = ['nippon','hdfc'];
-  Object.keys(groups).forEach(k => { if (!order.includes(k)) order.push(k); });
-  let html = '';
-  order.forEach(amc => { if (groups[amc]) html += buildSection(amc, groups[amc]); });
-  if (!html) html = `<div class="empty-state"><p>No funds match your filter.</p></div>`;
-  document.getElementById('fundContainer').innerHTML = html;
-  const customs = [...new Set(funds.filter(f => f.amc !== 'nippon' && f.amc !== 'hdfc').map(f => f.amc))];
-  const btn = document.getElementById('customNavBtn');
-  if (customs.length) { btn.style.display = 'flex'; document.getElementById('customNavLabel').textContent = customs[0]; }
-  else btn.style.display = 'none';
-}
-
-function buildSection(amc, list) {
-  const amcLabel = amc === 'nippon' ? 'Nippon India Mutual Fund' : amc === 'hdfc' ? 'HDFC Mutual Fund' : amc;
-  const badgeClass = amc === 'nippon' ? 'badge-nippon' : amc === 'hdfc' ? 'badge-hdfc' : 'badge-custom';
-  const badgeText  = amc === 'nippon' ? 'NIPPON' : amc === 'hdfc' ? 'HDFC' : amc.toUpperCase().slice(0,8);
-  const showBoth = planFilter === 'both';
-  const showReg  = planFilter !== 'direct';
-  const showDir  = planFilter !== 'regular';
-  let thead = `<thead><tr><th>Fund</th>`;
-  if (showBoth) {
-    thead += `<th class="right" style="color:var(--regular)">Reg Today</th>
-    <th class="right" style="color:var(--regular)">Reg Prev</th>
-    <th class="right" style="color:var(--regular)">Chg ₹</th>
-    <th class="center" style="color:var(--regular)">Chg %</th>
-    <th class="right col-sep" style="color:var(--direct)">Dir Today</th>
-    <th class="right" style="color:var(--direct)">Dir Prev</th>
-    <th class="right" style="color:var(--direct)">Chg ₹</th>
-    <th class="center" style="color:var(--direct)">Chg %</th>
-    <th class="right">Date</th><th class="center">Link</th>`;
-  } else {
-    thead += `<th class="right">Today NAV</th><th class="right">Prev NAV</th><th class="right">Chg ₹</th><th class="center">Chg %</th><th class="right">Date</th><th class="center">Link</th>`;
-  }
-  thead += `</tr></thead>`;
-  let rows = '';
-  list.forEach(f => {
-    const hasReg = showReg && f.regularCode;
-    const hasDir = showDir && f.directCode;
-    if (showBoth && (hasReg || hasDir)) rows += buildRowBoth(f);
-    else if (hasReg) rows += buildRowSingle(f, f.regularCode, 'regular');
-    else if (hasDir) rows += buildRowSingle(f, f.directCode, 'direct');
-  });
-  return `<div class="section-card">
-    <div class="section-head">
-      <div class="section-head-left">
-        <span class="amc-badge ${badgeClass}">${badgeText}</span>
-        <span class="section-name">${amcLabel}</span>
-        <span class="fund-count">${list.length} funds</span>
-      </div>
-      <div style="display:flex;gap:6px;font-size:11px;color:var(--muted);align-items:center">
-        <span style="color:var(--regular)">■</span> Regular &nbsp;<span style="color:var(--direct)">■</span> Direct
-      </div>
-    </div>
-    <table>${thead}<tbody>${rows}</tbody></table>
-  </div>`;
-}
-
-function navCells(d, isSep) {
-  const sep = isSep ? ' col-sep' : '';
-  if (!d) return `<td colspan="4" class="${sep}" style="color:var(--muted);font-size:11px;text-align:center">—</td>`;
-  const dir = d.pct > 0 ? 'up' : d.pct < 0 ? 'down' : 'flat';
-  const arrow = d.pct > 0 ? '▲' : d.pct < 0 ? '▼' : '—';
-  const pc = d.pct > 0 ? 'pct-up' : d.pct < 0 ? 'pct-down' : 'pct-flat';
-  return `<td style="text-align:right" class="${sep}"><div class="nav-val">₹${d.today.toFixed(4)}</div></td>
-    <td style="text-align:right"><div class="nav-val" style="color:var(--muted2)">₹${d.yesterday.toFixed(4)}</div></td>
-    <td style="text-align:right"><span class="change-inr ${dir}">${d.change>=0?'+':''}${d.change.toFixed(4)}</span></td>
-    <td style="text-align:center"><span class="change-pct ${pc}">${arrow} ${Math.abs(d.pct).toFixed(2)}%</span></td>`;
-}
-
-function buildRowBoth(f) {
-  const reg = f.regularCode ? navData[f.regularCode] : null;
-  const dir = f.directCode  ? navData[f.directCode]  : null;
-  const nd  = reg || dir;
-  const schemeInfo = [
-    f.regularCode ? `<span class="plan-tag tag-regular">REG #${f.regularCode}</span>` : '',
-    f.directCode  ? `<span class="plan-tag tag-direct">DIR #${f.directCode}</span>` : ''
-  ].filter(Boolean).join(' ');
-  return `<tr>
-    <td><div class="fund-name">${f.name}</div><div class="fund-meta" style="margin-top:4px">${schemeInfo}</div></td>
-    ${f.regularCode ? navCells(reg, false) : `<td colspan="4" style="color:var(--muted);font-size:11px;text-align:center">—</td>`}
-    ${f.directCode  ? navCells(dir, true)  : `<td colspan="4" class="col-sep" style="color:var(--muted);font-size:11px;text-align:center">—</td>`}
-    <td style="text-align:right">${nd?`<div class="nav-date">${nd.date}</div><div class="nav-date">prev:${nd.prevDate}</div>`:'—'}</td>
-    <td style="text-align:center;white-space:nowrap">
-      <a class="amfi-link" href="https://www.amfiindia.com/net-asset-value" target="_blank">AMFI↗</a>
-      &nbsp;<button class="btn btn-danger btn-sm" onclick="removeFund('${f.regularCode||''}','${f.directCode||''}')">✕</button>
-    </td>
-  </tr>`;
-}
-
-function buildRowSingle(f, code, plan) {
-  const d = navData[code];
-  const planLabel = plan === 'regular' ? 'Regular' : 'Direct';
-  const tagClass  = plan === 'regular' ? 'tag-regular' : 'tag-direct';
-  if (!d) {
-    return `<tr>
-      <td><div class="fund-name">${f.name}</div><div class="fund-meta"><span class="plan-tag ${tagClass}">${planLabel}</span> <span>#${code||'—'}</span></div></td>
-      <td colspan="4" style="color:var(--muted);font-size:11px">${!code?'No scheme code':'NAV unavailable — Refresh'}</td>
-      <td></td>
-      <td style="text-align:center"><button class="btn btn-danger btn-sm" onclick="removeFund('${f.regularCode||''}','${f.directCode||''}')">✕</button></td>
-    </tr>`;
-  }
-  const dir = d.pct > 0 ? 'up' : d.pct < 0 ? 'down' : 'flat';
-  const arrow = d.pct > 0 ? '▲' : d.pct < 0 ? '▼' : '—';
-  const pc = d.pct > 0 ? 'pct-up' : d.pct < 0 ? 'pct-down' : 'pct-flat';
-  return `<tr>
-    <td><div class="fund-name">${f.name}</div><div class="fund-meta"><span class="plan-tag ${tagClass}">${planLabel}</span> <span>#${code}</span></div></td>
-    <td style="text-align:right"><div class="nav-val">₹${d.today.toFixed(4)}</div></td>
-    <td style="text-align:right"><div class="nav-val" style="color:var(--muted2)">₹${d.yesterday.toFixed(4)}</div></td>
-    <td style="text-align:right"><span class="change-inr ${dir}">${d.change>=0?'+':''}${d.change.toFixed(4)}</span></td>
-    <td style="text-align:center"><span class="change-pct ${pc}">${arrow} ${Math.abs(d.pct).toFixed(2)}%</span></td>
-    <td style="text-align:right"><div class="nav-date">${d.date}</div><div class="nav-date">prev:${d.prevDate}</div></td>
-    <td style="text-align:center;white-space:nowrap">
-      <a class="amfi-link" href="https://www.amfiindia.com/net-asset-value" target="_blank">AMFI↗</a>
-      &nbsp;<button class="btn btn-danger btn-sm" onclick="removeFund('${f.regularCode||''}','${f.directCode||''}')">✕</button>
-    </td>
-  </tr>`;
-}
-
-function openAddModal() { document.getElementById('addModal').classList.add('open'); }
-function closeModal()    { document.getElementById('addModal').classList.remove('open'); }
-function closeModalOutside(e) { if (e.target.id === 'addModal') closeModal(); }
-
-document.getElementById('f-amc').addEventListener('change', function() {
-  document.getElementById('customAmcGroup').style.display = this.value === 'custom' ? 'block' : 'none';
-});
-
-async function addFund() {
-  const amcRaw    = document.getElementById('f-amc').value;
-  const customAmc = document.getElementById('f-customAmc').value.trim();
-  const name      = document.getElementById('f-name').value.trim();
-  const regCode   = document.getElementById('f-regcode').value.trim();
-  const dirCode   = document.getElementById('f-dircode').value.trim();
-  if (!name) { showToast('Please enter the fund name.'); return; }
-  if (!regCode && !dirCode) { showToast('Enter at least one scheme code.'); return; }
-  if (regCode && !/^\d+$/.test(regCode)) { showToast('Regular code must be numeric.'); return; }
-  if (dirCode && !/^\d+$/.test(dirCode)) { showToast('Direct code must be numeric.'); return; }
-  if (regCode && funds.find(f => f.regularCode === regCode)) { showToast('Regular code already exists.'); return; }
-  if (dirCode && funds.find(f => f.directCode === dirCode))  { showToast('Direct code already exists.'); return; }
-  showToast('Validating codes…');
-  const [reg, dir] = await Promise.all([fetchNAV(regCode||null), fetchNAV(dirCode||null)]);
-  if (regCode && !reg) { showToast('Regular code not found on mfapi.in'); return; }
-  if (dirCode && !dir) { showToast('Direct code not found on mfapi.in'); return; }
-  const amc = amcRaw === 'custom' ? (customAmc || 'other') : amcRaw;
-  funds.push({name, amc, regularCode: regCode||null, directCode: dirCode||null});
-  if (regCode) navData[regCode] = reg;
-  if (dirCode)  navData[dirCode]  = dir;
-  await saveFunds();
-  updateSummary(); renderAll(); closeModal();
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-regcode').value = '';
-  document.getElementById('f-dircode').value = '';
-  document.getElementById('f-customAmc').value = '';
-  showToast('✓ Added: ' + name);
-}
-
-async function removeFund(regCode, dirCode) {
-  const f = funds.find(x => x.regularCode === regCode || x.directCode === dirCode);
-  if (!f || !confirm(`Remove "${f.name}" from tracker?`)) return;
-  funds = funds.filter(x => x !== f);
-  delete navData[regCode]; delete navData[dirCode];
-  await saveFunds();
-  updateSummary(); renderAll();
-  showToast('Removed: ' + f.name);
-}
-
+const DEFAULT_FUNDS=[{name:"Nippon India Large Cap Fund",amc:"nippon",regularCode:"118989",directCode:"118701"},{name:"Nippon India Small Cap Fund",amc:"nippon",regularCode:"118778",directCode:"118777"},{name:"Nippon India Multi Cap Fund",amc:"nippon",regularCode:"118825",directCode:"118824"},{name:"Nippon India Growth Fund",amc:"nippon",regularCode:"118560",directCode:"118559"},{name:"Nippon India Flexi Cap Fund",amc:"nippon",regularCode:"120465",directCode:"120466"},{name:"Nippon India Liquid Fund",amc:"nippon",regularCode:"118272",directCode:"118271"},{name:"Nippon India Short Term Fund",amc:"nippon",regularCode:"118305",directCode:"118304"},{name:"Nippon India Gilt Securities Fund",amc:"nippon",regularCode:"118354",directCode:"118353"},{name:"Nippon India Balanced Advantage Fund",amc:"nippon",regularCode:"118551",directCode:"118550"},{name:"Nippon India Power & Infra Fund",amc:"nippon",regularCode:"118804",directCode:"118803"},{name:"Nippon India Pharma Fund",amc:"nippon",regularCode:"118806",directCode:"118807"},{name:"Nippon India Banking & Fin Services Fund",amc:"nippon",regularCode:"118801",directCode:"118800"},{name:"Nippon India Focused Equity Fund",amc:"nippon",regularCode:"118548",directCode:"118547"},{name:"Nippon India Value Fund",amc:"nippon",regularCode:"118844",directCode:"118843"},{name:"Nippon India Consumption Fund",amc:"nippon",regularCode:"118808",directCode:"118809"},{name:"Nippon India Tax Saver (ELSS) Fund",amc:"nippon",regularCode:"118839",directCode:"118838"},{name:"Nippon India Multi Asset Allocation Fund",amc:"nippon",regularCode:"147946",directCode:"147947"},{name:"Nippon India Arbitrage Fund",amc:"nippon",regularCode:"118995",directCode:"118994"},{name:"Nippon India US Equity Opp Fund",amc:"nippon",regularCode:"119643",directCode:"119644"},{name:"HDFC Top 100 Fund",amc:"hdfc",regularCode:"119533",directCode:"119552"},{name:"HDFC Mid-Cap Opportunities Fund",amc:"hdfc",regularCode:"119292",directCode:"119551"},{name:"HDFC Small Cap Fund",amc:"hdfc",regularCode:"119598",directCode:"119599"},{name:"HDFC Flexi Cap Fund",amc:"hdfc",regularCode:"119597",directCode:"119596"},{name:"HDFC Balanced Advantage Fund",amc:"hdfc",regularCode:"119189",directCode:"119188"},{name:"HDFC Liquid Fund",amc:"hdfc",regularCode:"119062",directCode:"119061"},{name:"HDFC Short Term Debt Fund",amc:"hdfc",regularCode:"119105",directCode:"119104"},{name:"HDFC Corporate Bond Fund",amc:"hdfc",regularCode:"119816",directCode:"119815"},{name:"HDFC Gilt Fund",amc:"hdfc",regularCode:"119094",directCode:"119093"},{name:"HDFC Equity Savings Fund",amc:"hdfc",regularCode:"119817",directCode:"119818"},{name:"HDFC Infrastructure Fund",amc:"hdfc",regularCode:"104686",directCode:"119020"},{name:"HDFC Large and Mid Cap Fund",amc:"hdfc",regularCode:"100233",directCode:"119021"},{name:"HDFC Multi Cap Fund",amc:"hdfc",regularCode:"149243",directCode:"149244"},{name:"HDFC Focused 30 Fund",amc:"hdfc",regularCode:"100235",directCode:"119017"},{name:"HDFC Index Fund Nifty 50 Plan",amc:"hdfc",regularCode:"120716",directCode:"120765"},{name:"HDFC Nifty Next 50 Index Fund",amc:"hdfc",regularCode:"140178",directCode:"140179"},{name:"HDFC Arbitrage Fund",amc:"hdfc",regularCode:"119270",directCode:"119269"},{name:"HDFC Overnight Fund",amc:"hdfc",regularCode:"145707",directCode:"145708"},{name:"HDFC Money Market Fund",amc:"hdfc",regularCode:"100490",directCode:"119082"},{name:"HDFC Tax Saver (ELSS) Fund",amc:"hdfc",regularCode:"100032",directCode:"119030"},{name:"HDFC Defence Fund",amc:"hdfc",regularCode:"151751",directCode:"151750"},{name:"HDFC Innovation Fund",amc:"hdfc",regularCode:"153621",directCode:"153620"}];
+const STORAGE_KEY="mf_tracker_shared_v1";
+let funds=[],navData={},currentFilter="all",planFilter="both",storageReady=false;
+async function loadFunds(){try{const r=await window.storage.get(STORAGE_KEY,true);if(r&&r.value){funds=JSON.parse(r.value);storageReady=true;document.getElementById("syncBanner").style.display="flex";}else{funds=JSON.parse(JSON.stringify(DEFAULT_FUNDS));await window.storage.set(STORAGE_KEY,JSON.stringify(funds),true);storageReady=true;document.getElementById("syncBanner").style.display="flex";}}catch(e){funds=JSON.parse(JSON.stringify(DEFAULT_FUNDS));}}
+async function saveFunds(){try{if(storageReady)await window.storage.set(STORAGE_KEY,JSON.stringify(funds),true);}catch(e){}}
+async function fetchNAV(code){if(!code)return null;try{const r=await fetch("https://api.mfapi.in/mf/"+code);if(!r.ok)return null;const d=await r.json();const navs=d.data;if(!navs||navs.length<2)return null;const today=parseFloat(navs[0].nav),yesterday=parseFloat(navs[1].nav),change=today-yesterday,pct=(change/yesterday)*100;return{today,yesterday,change,pct,date:navs[0].date,prevDate:navs[1].date};}catch(e){return null;}}
+async function refreshAll(){document.getElementById("statusText").textContent="Fetching…";navData={};document.getElementById("fundContainer").innerHTML='<div class="section-card"><div class="loading-cell">Fetching NAV from AMFI via mfapi.in…</div></div>';await Promise.all(funds.map(async f=>{const[reg,dir]=await Promise.all([fetchNAV(f.regularCode),fetchNAV(f.directCode)]);navData[f.regularCode]=reg;navData[f.directCode]=dir;}));updateSummary();renderAll();const now=new Date();document.getElementById("statusText").textContent="Updated "+now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});}
+function updateSummary(){const a=funds.flatMap(f=>[navData[f.regularCode],navData[f.directCode]].filter(Boolean));const g=a.filter(n=>n.pct>0).length,l=a.filter(n=>n.pct<0).length,avg=a.length?a.reduce((s,n)=>s+n.pct,0)/a.length:0;document.getElementById("s-total").textContent=funds.length;document.getElementById("s-gain").textContent=g;document.getElementById("s-loss").textContent=l;const el=document.getElementById("s-avg");el.textContent=(avg>=0?"+":"")+avg.toFixed(2)+"%";el.className="stat-value "+(avg>0?"green":avg<0?"red":"");}
+function setFilter(f,el){currentFilter=f;document.querySelectorAll(".nav-btn").forEach(n=>n.classList.remove("active"));el.classList.add("active");renderAll();}
+function setPlanFilter(p){planFilter=p;["ptBoth","ptReg","ptDir"].forEach(id=>document.getElementById(id).className="plan-btn");if(p==="both")document.getElementById("ptBoth").className="plan-btn active-both";if(p==="regular")document.getElementById("ptReg").className="plan-btn active-regular";if(p==="direct")document.getElementById("ptDir").className="plan-btn active-direct";renderAll();}
+function renderAll(){const q=document.getElementById("searchInput").value.toLowerCase();let filtered=funds.filter(f=>{if(currentFilter!=="all"&&f.amc!==currentFilter)return false;if(q&&!f.name.toLowerCase().includes(q))return false;return true;});const groups={};filtered.forEach(f=>{if(!groups[f.amc])groups[f.amc]=[];groups[f.amc].push(f);});const order=["nippon","hdfc"];Object.keys(groups).forEach(k=>{if(!order.includes(k))order.push(k);});let html="";order.forEach(amc=>{if(groups[amc])html+=buildSection(amc,groups[amc]);});if(!html)html='<div class="empty-state">No funds match your filter.</div>';document.getElementById("fundContainer").innerHTML=html;const customs=[...new Set(funds.filter(f=>f.amc!=="nippon"&&f.amc!=="hdfc").map(f=>f.amc))];const btn=document.getElementById("customNavBtn");if(customs.length){btn.style.display="flex";document.getElementById("customNavLabel").textContent=customs[0];}else btn.style.display="none";}
+function buildSection(amc,list){const amcLabel=amc==="nippon"?"Nippon India Mutual Fund":amc==="hdfc"?"HDFC Mutual Fund":amc;const badgeClass=amc==="nippon"?"badge-nippon":amc==="hdfc"?"badge-hdfc":"badge-custom";const badgeText=amc==="nippon"?"NIPPON":amc==="hdfc"?"HDFC":amc.toUpperCase().slice(0,8);const showBoth=planFilter==="both",showReg=planFilter!=="direct",showDir=planFilter!=="regular";let thead="<thead><tr><th>Fund</th>";if(showBoth){thead+=`<th class="right" style="color:var(--regular)">Reg NAV</th><th class="right" style="color:var(--regular)">Prev</th><th class="right" style="color:var(--regular)">Chg ₹</th><th class="center" style="color:var(--regular)">Chg %</th><th class="right col-sep" style="color:var(--direct)">Dir NAV</th><th class="right" style="color:var(--direct)">Prev</th><th class="right" style="color:var(--direct)">Chg ₹</th><th class="center" style="color:var(--direct)">Chg %</th><th class="right">Date</th><th class="center">—</th>`;}else{thead+=`<th class="right">Today NAV</th><th class="right">Prev NAV</th><th class="right">Chg ₹</th><th class="center">Chg %</th><th class="right">Date</th><th class="center">—</th>`;}thead+="</tr></thead>";let rows="";list.forEach(f=>{const hasReg=showReg&&f.regularCode,hasDir=showDir&&f.directCode;if(showBoth&&(hasReg||hasDir))rows+=buildRowBoth(f);else if(hasReg)rows+=buildRowSingle(f,f.regularCode,"regular");else if(hasDir)rows+=buildRowSingle(f,f.directCode,"direct");});return`<div class="section-card"><div class="section-head"><div class="section-head-left"><span class="amc-badge ${badgeClass}">${badgeText}</span><span class="section-name">${amcLabel}</span><span class="fund-count">${list.length} funds</span></div><div style="display:flex;gap:8px;font-size:11px;color:var(--muted);align-items:center;font-family:var(--mono)"><span style="color:var(--regular)">&#9679;</span> Regular &nbsp;<span style="color:var(--direct)">&#9679;</span> Direct</div></div><div class="table-wrap"><table>${thead}<tbody>${rows}</tbody></table></div></div>`;}
+function navCells(d,isSep){const sep=isSep?" col-sep":"";if(!d)return`<td colspan="4" class="${sep}" style="color:var(--muted);font-size:11px;text-align:center">—</td>`;const dir=d.pct>0?"up":d.pct<0?"down":"flat",arrow=d.pct>0?"▲":d.pct<0?"▼":"—",pc=d.pct>0?"pct-up":d.pct<0?"pct-down":"pct-flat";return`<td style="text-align:right" class="${sep}"><div class="nav-val">₹${d.today.toFixed(4)}</div></td><td style="text-align:right"><div class="nav-prev">₹${d.yesterday.toFixed(4)}</div></td><td style="text-align:right"><span class="change-inr ${dir}">${d.change>=0?"+":""}${d.change.toFixed(4)}</span></td><td style="text-align:center"><span class="change-pct ${pc}">${arrow} ${Math.abs(d.pct).toFixed(2)}%</span></td>`;}
+function buildRowBoth(f){const reg=f.regularCode?navData[f.regularCode]:null,dir=f.directCode?navData[f.directCode]:null,nd=reg||dir;const schemeInfo=[f.regularCode?`<span class="plan-tag tag-regular">REG #${f.regularCode}</span>`:"",f.directCode?`<span class="plan-tag tag-direct">DIR #${f.directCode}</span>`:""].filter(Boolean).join(" ");return`<tr><td><div class="fund-name">${f.name}</div><div class="fund-meta" style="margin-top:4px">${schemeInfo}</div></td>${f.regularCode?navCells(reg,false):`<td colspan="4" style="color:var(--muted);font-size:11px;text-align:center">—</td>`}${f.directCode?navCells(dir,true):`<td colspan="4" class="col-sep" style="color:var(--muted);font-size:11px;text-align:center">—</td>`}<td style="text-align:right">${nd?`<div class="nav-date">${nd.date}</div><div class="nav-date" style="color:var(--muted)">prev: ${nd.prevDate}</div>`:"—"}</td><td style="text-align:center;white-space:nowrap"><a class="amfi-link" href="https://www.amfiindia.com/net-asset-value" target="_blank">AMFI↗</a> &nbsp;<button class="btn btn-danger btn-sm" onclick="removeFund('${f.regularCode||""}','${f.directCode||""}')">&#10005;</button></td></tr>`;}
+function buildRowSingle(f,code,plan){const d=navData[code],planLabel=plan==="regular"?"Regular":"Direct",tagClass=plan==="regular"?"tag-regular":"tag-direct";if(!d){return`<tr><td><div class="fund-name">${f.name}</div><div class="fund-meta"><span class="plan-tag ${tagClass}">${planLabel}</span> <span>#${code||"—"}</span></div></td><td colspan="4" style="color:var(--muted);font-size:11px">${!code?"No scheme code":"NAV unavailable — Refresh"}</td><td></td><td style="text-align:center"><button class="btn btn-danger btn-sm" onclick="removeFund('${f.regularCode||""}','${f.directCode||""}')">&#10005;</button></td></tr>`;}const dir=d.pct>0?"up":d.pct<0?"down":"flat",arrow=d.pct>0?"▲":d.pct<0?"▼":"—",pc=d.pct>0?"pct-up":d.pct<0?"pct-down":"pct-flat";return`<tr><td><div class="fund-name">${f.name}</div><div class="fund-meta"><span class="plan-tag ${tagClass}">${planLabel}</span> <span>#${code}</span></div></td><td style="text-align:right"><div class="nav-val">₹${d.today.toFixed(4)}</div></td><td style="text-align:right"><div class="nav-prev">₹${d.yesterday.toFixed(4)}</div></td><td style="text-align:right"><span class="change-inr ${dir}">${d.change>=0?"+":""}${d.change.toFixed(4)}</span></td><td style="text-align:center"><span class="change-pct ${pc}">${arrow} ${Math.abs(d.pct).toFixed(2)}%</span></td><td style="text-align:right"><div class="nav-date">${d.date}</div><div class="nav-date" style="color:var(--muted)">prev: ${d.prevDate}</div></td><td style="text-align:center;white-space:nowrap"><a class="amfi-link" href="https://www.amfiindia.com/net-asset-value" target="_blank">AMFI↗</a> &nbsp;<button class="btn btn-danger btn-sm" onclick="removeFund('${f.regularCode||""}','${f.directCode||""}')">&#10005;</button></td></tr>`;}
+function openAddModal(){document.getElementById("addModal").classList.add("open");}
+function closeModal(){document.getElementById("addModal").classList.remove("open");}
+function closeModalOutside(e){if(e.target.id==="addModal")closeModal();}
+function openDrawer(){document.getElementById("drawer").classList.add("open");document.getElementById("drawerOverlay").classList.add("open");}
+function closeDrawer(){document.getElementById("drawer").classList.remove("open");document.getElementById("drawerOverlay").classList.remove("open");}
+document.getElementById("f-amc").addEventListener("change",function(){document.getElementById("customAmcGroup").style.display=this.value==="custom"?"block":"none";});
+async function addFund(){const amcRaw=document.getElementById("f-amc").value,customAmc=document.getElementById("f-customAmc").value.trim(),name=document.getElementById("f-name").value.trim(),regCode=document.getElementById("f-regcode").value.trim(),dirCode=document.getElementById("f-dircode").value.trim();if(!name){showToast("Please enter the fund name.");return;}if(!regCode&&!dirCode){showToast("Enter at least one scheme code.");return;}if(regCode&&!/^\d+$/.test(regCode)){showToast("Regular code must be numeric.");return;}if(dirCode&&!/^\d+$/.test(dirCode)){showToast("Direct code must be numeric.");return;}if(regCode&&funds.find(f=>f.regularCode===regCode)){showToast("Regular code already exists.");return;}if(dirCode&&funds.find(f=>f.directCode===dirCode)){showToast("Direct code already exists.");return;}showToast("Validating codes…");const[reg,dir]=await Promise.all([fetchNAV(regCode||null),fetchNAV(dirCode||null)]);if(regCode&&!reg){showToast("Regular code not found on mfapi.in");return;}if(dirCode&&!dir){showToast("Direct code not found on mfapi.in");return;}const amc=amcRaw==="custom"?(customAmc||"other"):amcRaw;funds.push({name,amc,regularCode:regCode||null,directCode:dirCode||null});if(regCode)navData[regCode]=reg;if(dirCode)navData[dirCode]=dir;await saveFunds();updateSummary();renderAll();closeModal();document.getElementById("f-name").value="";document.getElementById("f-regcode").value="";document.getElementById("f-dircode").value="";document.getElementById("f-customAmc").value="";showToast("✓ Added: "+name);}
+async function removeFund(regCode,dirCode){const f=funds.find(x=>x.regularCode===regCode||x.directCode===dirCode);if(!f||!confirm(`Remove "${f.name}" from tracker?`))return;funds=funds.filter(x=>x!==f);delete navData[regCode];delete navData[dirCode];await saveFunds();updateSummary();renderAll();showToast("Removed: "+f.name);}
 let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast show';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function tick() {
-  const now = new Date();
-  document.getElementById('todayDate').textContent =
-    now.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('sidebarTime').textContent =
-    now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}
-
-(async () => {
-  await loadFunds();
-  tick(); setInterval(tick, 1000);
-  await refreshAll();
-})();
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.className="toast show";clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),3000);}
+function tick(){const now=new Date();document.getElementById("todayDate").textContent=now.toLocaleDateString("en-IN",{weekday:"long",year:"numeric",month:"long",day:"numeric"});document.getElementById("sidebarTime").textContent=now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});}
+(async()=>{await loadFunds();tick();setInterval(tick,1000);await refreshAll();})();
 </script>
 </body>
 </html>
